@@ -25,12 +25,34 @@ const savePost = async (body) => {
 
 // /register 
 app.post('/api/register', async (req, res) => {
-  const newUser = new Users ({
+  const newUser = new Users({
     email: req.body.email,
     password: req.body.password
   });
-  const savedUser = await newUser.save(newUser);
+  const savedUser = await newUser.save(newUser).catch((e) => {
+    console.error("server error: ", e);
+    return res.status(400).json({ message: "can't register this user (server error)" });
+  });
   console.log("user saved successfully: ", savedUser);
+  // send res
+  return res.status(200).json({ message: "registered successfully" })
+})
+
+// /login 
+app.post('/api/login', async (req, res) => {
+
+  const { email, password } = req.body;
+  const user = await Users.findOne({ email });
+  if (!user) {
+    console.error("invalid email");
+    return res.status(400).json({ message: "invalid email" });
+  }
+  // add hash later
+  if (user.password != password) {
+    console.error("invalid password");
+    return res.status(400).json({ message: "invalid password" });
+  }
+  return res.status(200).json({ message: "logged successfully" })
 })
 
 

@@ -134,11 +134,19 @@ const handleLogin = async () => {
   console.log(user);
   if (isLogin.value == "login") {
     // login unimplemented
+    const res = await axios
+      .post("http://localhost:8080/api/login", toRaw(user))
+      .catch((err) => {
+        console.error("Error during login: ", err.response);
+      });
+      // later make the error in the ui (email or password)
+    console.log(res);
+
   } else if (isLogin.value == "register") {
     const res = await axios
       .post("http://localhost:8080/api/register", toRaw(user))
       .catch((err) => {
-        console.error("Error during register: ", err);
+        console.error("Error during register: ", err.response);
       });
       // later make the error in the ui (email or password)
     console.log(res);
