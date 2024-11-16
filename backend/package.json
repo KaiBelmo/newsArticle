@@ -1,0 +1,15 @@
+{
+  "name": "newsproject",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm-run-all --parallel start:frontend start:backend",
+    "start:frontend": "cd news-article && pnpm vite",
+    "start:backend": "cd server && npm run serve"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "newsproject": "file:"
+  }
+}
