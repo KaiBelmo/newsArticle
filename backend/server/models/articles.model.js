@@ -20,4 +20,12 @@ const articleSchema = mongoose.Schema({
   }
 });
 
-export const articles = mongoose.model("Article", articleSchema);
+// {
+//   "articleID": 83274874,
+//   "title": "test title",
+//   "body": "asdasdasdasd",
+//   "author": "idk",
+//   "isPrivate": true
+// }
+
+export const articles = mongoose.model("articles", articleSchema);
