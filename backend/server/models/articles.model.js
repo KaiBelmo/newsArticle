@@ -28,4 +28,4 @@ const articleSchema = mongoose.Schema({
 //   "isPrivate": true
 // }
 
-export const articles = mongoose.model("articles", articleSchema);
+export const Articles = mongoose.model("articles", articleSchema);
