@@ -33,17 +33,21 @@
       </h2>
     </section>
     <form class="flex flex-col" @submit.prevent="handleLogin">
+      <label for="emailInput" class="text-left text-sm text-red-500">{{ userError.emailError }}</label>
       <input
         class="rounded bg-white my-2 outline-1 border-2 border-zinc-300 px-3 py-2 text-sm"
         placeholder="Email"
         type="email"
         v-model="user.email"
+        id="emailInput"
       />
+      <label for="PasswordInput" class="text-left text-sm text-red-500">{{ userError.passwordError }}</label>
       <input
-        class="rounded bg-white my-2 outline-1 border-2 border-zinc-300 px-3 py-2 text-sm"
+      class="rounded bg-white my-2 outline-1 border-2 border-zinc-300 px-3 py-2 text-sm"
         placeholder="Password"
         type="password"
         v-model="user.password"
+        id="PasswordInput"
       />
       <button
         class="bg-zinc-950 text-white py-2.5 px-3 rounded-md font-medium text-sm mt-5"
@@ -118,6 +122,7 @@
 <script setup>
 import { ref, reactive, toRaw } from "vue";
 import axios from "axios";
+import { handleLoginError, resetUserError } from "../utils/handleLoginError";
 
 const isLogin = ref("login");
 
@@ -126,30 +131,38 @@ const user = reactive({
   password: "",
 });
 
+const userError = reactive({
+  emailError: "",
+  passwordError: "",
+  unknownError: "",
+});
+
 const setActive = (state) => {
   isLogin.value = state;
 };
 
 const handleLogin = async () => {
-  console.log(user);
+  resetUserError(userError);
   if (isLogin.value == "login") {
-    // login unimplemented
-    const res = await axios
+    try {
+      const res = await axios
       .post("http://localhost:8080/api/login", toRaw(user))
-      .catch((err) => {
-        console.error("Error during login: ", err.response);
-      });
-      // later make the error in the ui (email or password)
-    console.log(res);
-
+      console.log("logged in");
+      console.log(res);
+    } catch (err) {
+      resetUserError(userError);
+      console.error("Error during login: ", err.response);
+      handleLoginError(err, userError);
+      console.log(userError);
+      // TODO: login unimplemented add cookies
+    }
   } else if (isLogin.value == "register") {
     const res = await axios
       .post("http://localhost:8080/api/register", toRaw(user))
       .catch((err) => {
         console.error("Error during register: ", err.response);
       });
-      // later make the error in the ui (email or password)
-    console.log(res);
+    // TODO: later make the error in the ui (email or password)
   }
 };
 </script>

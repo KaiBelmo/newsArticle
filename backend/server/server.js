@@ -7,7 +7,7 @@ import cors from "cors"
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend origin
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 
@@ -29,12 +29,12 @@ app.post('/api/register', async (req, res) => {
     email: req.body.email,
     password: req.body.password
   });
+  // TODO: check if user is already in db if yes return error
   const savedUser = await newUser.save(newUser).catch((e) => {
     console.error("server error: ", e);
     return res.status(400).json({ message: "can't register this user (server error)" });
   });
   console.log("user saved successfully: ", savedUser);
-  // send res
   return res.status(200).json({ message: "registered successfully" })
 })
 
@@ -47,12 +47,12 @@ app.post('/api/login', async (req, res) => {
     console.error("invalid email");
     return res.status(400).json({ message: "invalid email" });
   }
-  // add hash later
+  // TODO: add hash later
   if (user.password != password) {
     console.error("invalid password");
     return res.status(400).json({ message: "invalid password" });
   }
-  return res.status(200).json({ message: "logged successfully" })
+  return res.status(200).json({ message: "logged successfully" });
 })
 
 
