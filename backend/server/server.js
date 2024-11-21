@@ -25,11 +25,17 @@ const savePost = async (body) => {
 
 // /register 
 app.post('/api/register', async (req, res) => {
+
+  const { email: userEmail, password: userPassword } = req.body;
+  const user = await Users.findOne({ email: userEmail });
+  if (user) {
+    return res.status(400).json({ message: "email is already registered" });
+  } 
+
   const newUser = new Users({
-    email: req.body.email,
-    password: req.body.password
+    email: userEmail,
+    password: userPassword
   });
-  // TODO: check if user is already in db if yes return error
   const savedUser = await newUser.save(newUser).catch((e) => {
     console.error("server error: ", e);
     return res.status(400).json({ message: "can't register this user (server error)" });
@@ -40,15 +46,15 @@ app.post('/api/register', async (req, res) => {
 
 // /login 
 app.post('/api/login', async (req, res) => {
+  const { email: userEmail, password: userPassword } = req.body;
+  const user = await Users.findOne({ email: userEmail });
 
-  const { email, password } = req.body;
-  const user = await Users.findOne({ email });
   if (!user) {
     console.error("invalid email");
     return res.status(400).json({ message: "invalid email" });
   }
   // TODO: add hash later
-  if (user.password != password) {
+  if (user.password != userPassword) {
     console.error("invalid password");
     return res.status(400).json({ message: "invalid password" });
   }

@@ -150,19 +150,25 @@ const handleLogin = async () => {
       console.log("logged in");
       console.log(res);
     } catch (err) {
-      resetUserError(userError);
       console.error("Error during login: ", err.response);
       handleLoginError(err, userError);
       console.log(userError);
       // TODO: login unimplemented add cookies
     }
   } else if (isLogin.value == "register") {
-    const res = await axios
-      .post("http://localhost:8080/api/register", toRaw(user))
-      .catch((err) => {
-        console.error("Error during register: ", err.response);
-      });
-    // TODO: later make the error in the ui (email or password)
+
+    try {
+      const res = await axios
+        .post("http://localhost:8080/api/register", toRaw(user))
+        console.log("registered email");
+        console.log(res);
+      } catch (err) {
+      console.error("Error during registering: ", err.response);
+      handleLoginError(err, userError);
+      console.log(userError);
+    }
+
+    // TODO: later make the error in the ui (email or password) DONE
   }
 };
 </script>
