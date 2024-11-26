@@ -167,8 +167,6 @@ const handleLogin = async () => {
       handleLoginError(err, userError);
       console.log(userError);
     }
-
-    // TODO: later make the error in the ui (email or password) DONE
   }
 };
 </script>
