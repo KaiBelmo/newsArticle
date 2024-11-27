@@ -96,6 +96,7 @@ app.post('/api/register', async (req, res) => {
   return res.status(200).json({ message: "registered successfully" })
 })
 
+
 // /login 
 app.post('/api/login', async (req, res) => {
   const { email: userEmail, password: userPassword } = req.body;
@@ -142,7 +143,25 @@ app.post('/api/article', (req, res) => {
   // res.send(req.body);
 })
 
-
+// add new article
+app.post('/api/addnewarticle', async (req, res) => {
+  console.log('Received POST request to /api/addnewarticle');
+  try {
+    const { title, body, author, isPrivate } = req.body;
+    console.log('Request body:', req.body);
+    if (!title || !body || !author) {
+      return res.status(400).json({ message: 'Title, body, and author are required' });
+    }
+    const article = new Articles({articleID: uuidv4(), title, body, author, isPrivate });
+    console.log('Creating new article:', article);
+    await article.save();
+    console.log('Article created successfully');
+    res.status(201).json({ message: 'Article created successfully' });
+  } catch (err) {
+    console.error('Error creating article:', err);
+    res.status(500).json({ message: 'Error creating article' });
+  }
+});
 
 
 // mongodb://localhost:27017

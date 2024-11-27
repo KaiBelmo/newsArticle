@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const articleSchema = mongoose.Schema({
   articleID: {
-    type: Number,
-    required: [true, "you cant have an article without article id"]
-  },
-  title: {
+    type: String,
+    required: [true, "you cant have an article without article id"],
+    unique: true,
+  },title: {
     type: String,
     required: [true, "you cant have an article without title"]
   }, body: {
