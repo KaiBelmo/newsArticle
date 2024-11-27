@@ -163,5 +163,18 @@ app.post('/api/addnewarticle', async (req, res) => {
   }
 });
 
+app.put('/api/updatearticle/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const article = await Articles.findOneAndUpdate({ articleID: id }, req.body, { new: true });
+    if (!article) {
+      return res.status(404).json({ message: 'article not found' });
+    }
+    res.status(200).json({ message: 'article updated successfully', article });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error updating article' });
+  }
+});
 
 // mongodb://localhost:27017
