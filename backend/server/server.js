@@ -177,4 +177,60 @@ app.put('/api/updatearticle/:id', async (req, res) => {
   }
 });
 
+app.get('/api/listallarticles', async (req, res) => {
+  try {
+    const articles = await Articles.find().exec();
+    if (articles.length === 0) {
+      return res.status(404).json({ message: 'No articles found' });
+    }
+    res.status(200).json({ message: 'articles retrieved successfully', articles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving articles' });
+  }
+});
+
+app.get('/api/searcharticles', async (req, res) => {
+  try {
+    const { keywords } = req.query;
+    const query = {
+      $or: [
+        { title: { $regex: keywords, $options: 'i' } },
+        { body: { $regex: keywords, $options: 'i' } },
+        { author: { $regex: keywords, $options: 'i' } }
+      ]
+    };
+
+    const articles = await Articles.find(query).exec();
+    if (articles.length === 0) {
+      return res.status(404).json({ message: 'no articles found' });
+    }
+
+    // Sort articles by relevance (title > body > author)
+    articles.sort((a, b) => {
+      const aTitleMatch = a.title.match(new RegExp(keywords, 'i'));
+      const bTitleMatch = b.title.match(new RegExp(keywords, 'i'));
+      if (aTitleMatch && !bTitleMatch) return -1;
+      if (!aTitleMatch && bTitleMatch) return 1;
+
+      const aBodyMatch = a.body.match(new RegExp(keywords, 'i'));
+      const bBodyMatch = b.body.match(new RegExp(keywords, 'i'));
+      if (aBodyMatch && !bBodyMatch) return -1;
+      if (!aBodyMatch && bBodyMatch) return 1;
+
+      const aAuthorMatch = a.author.match(new RegExp(keywords, 'i'));
+      const bAuthorMatch = b.author.match(new RegExp(keywords, 'i'));
+      if (aAuthorMatch && !bAuthorMatch) return -1;
+      if (!aAuthorMatch && bAuthorMatch) return 1;
+
+      return 0;
+    });
+
+    res.status(200).json({ message: 'articles retrieved successfully', articles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving articles' });
+  }
+});
+
 // mongodb://localhost:27017
