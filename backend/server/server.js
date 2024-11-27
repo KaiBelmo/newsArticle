@@ -236,4 +236,18 @@ app.get('/api/searcharticles', async (req, res) => {
   }
 });
 
+// fetch users infos by id
+app.get('/api/user/:id', async (req, res) => {
+  try {
+    const user = await Users.findOne({ userID: req.params.id }).exec();
+    if (!user) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+    res.status(200).json({ message: 'user retrieved successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving user' });
+  }
+})
+
 // mongodb://localhost:27017

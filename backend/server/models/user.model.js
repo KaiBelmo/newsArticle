@@ -18,6 +18,18 @@ const userSchema = mongoose.Schema({
     enum: ['admin', 'user'], 
     default: 'user'
   },
+  name: {
+    type: String,
+    required: [false, "you can create user without name"]
+  },
+  bio: {
+    type: String,
+    required: [false, "you can create user without bio"]
+  },
+  avatar: {
+    type: String,
+    required: [false, "you can create user without avatar"]
+  }
 });
 
 export const Users = mongoose.model("users", userSchema);
