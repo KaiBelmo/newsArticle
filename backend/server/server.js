@@ -48,6 +48,10 @@ app.use((req, res, next) => {
   next();
 })
 
+const isAdmin = (sessionBody) => {
+  return sessionBody.role === "admin" ? true : false;
+}
+
 
 app.get('/', (req, res) => {
   res.send("server is running");
@@ -75,7 +79,8 @@ app.post('/api/register', async (req, res) => {
   const newUser = new Users({
     userID: uuidv4(),
     email: userEmail,
-    password: hashedPassword
+    password: hashedPassword,
+    role: "user"
   });
 
   const savedUser = await newUser.save(newUser).catch((e) => {
@@ -85,7 +90,7 @@ app.post('/api/register', async (req, res) => {
 
   const sessionID = sessionStore.generateSessionID();
   sessionStore.saveSession(sessionID, newUser.toObject());
-  
+
   // res.setHeader('Set-Cookie', `session=${sessionID}; HttpOnly; Path=/; SameSite=None; Secure`);
 
   res.set('Set-Cookie', `session=${sessionID}; Path=/; HttpOnly;`);
@@ -95,7 +100,6 @@ app.post('/api/register', async (req, res) => {
   console.log("user saved successfully: ", savedUser);
   return res.status(200).json({ message: "registered successfully" })
 })
-
 
 // /login 
 app.post('/api/login', async (req, res) => {
@@ -108,12 +112,6 @@ app.post('/api/login', async (req, res) => {
   }
   const passwordMatch = await compare(userPassword, user.password);
 
-  console.log("userPassword-------------")
-  console.log(userPassword)
-  console.log("user password------------")
-  console.log(user.password)
-
-  // if (user.password != userPassword) {
   if (!passwordMatch) {
     console.error("invalid password");
     return res.status(400).json({ message: "invalid password" });
@@ -122,6 +120,8 @@ app.post('/api/login', async (req, res) => {
   const sessionID = sessionStore.generateSessionID();
   console.log(user.toObject())
   sessionStore.saveSession(sessionID, user.toObject());
+
+
   res.set('Set-Cookie', `session=${sessionID}; Path=/; HttpOnly;`);
 
   return res.status(200).json({ message: "logged successfully" });
@@ -129,10 +129,11 @@ app.post('/api/login', async (req, res) => {
 
 // test
 app.get('/api/test', (req, res) => {
-  if (!req.session) {
+  if (!req.session || !isAdmin(req.session)) {
     return res.status(401).json({message: 'not allowed'})
   }
-  return res.status(200).json({message: 'allowed'})
+  console.log(req.session.role);
+  return res.status(200).json({message: 'allowed (admin)'})
 });
 
 
@@ -142,6 +143,8 @@ app.post('/api/article', (req, res) => {
   savePost(req.body);
   // res.send(req.body);
 })
+
+
 
 // add new article
 app.post('/api/addnewarticle', async (req, res) => {

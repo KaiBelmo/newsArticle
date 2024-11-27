@@ -12,7 +12,12 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: [true, "you cant create user without password"]
-  }
+  },
+  role: { 
+    type: String, 
+    enum: ['admin', 'user'], 
+    default: 'user'
+  },
 });
 
 export const Users = mongoose.model("users", userSchema);
