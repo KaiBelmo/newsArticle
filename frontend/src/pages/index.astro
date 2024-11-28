@@ -1,12 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import TopArticleCard from '../components/TopArticleCard.astro';
+import LatestNews from '../components/LatestNews.astro';
+
+//tmp articles examples
+const articles = [
+  {
+    image: "https://via.placeholder.com/500x300",
+    publisher: "BBC",
+    time: "1 hour ago",
+    title: "'He deserves a lot more': Verstappen backs Alonso",
+    preview: "Max Verstappen believes Fernando Alonso deserves far more success in his Formula 1 career...",
+    category: "Sport",
+    readTime: "2",
+  },
+  {
+    image: "https://via.placeholder.com/500x300",
+    publisher: "CNN",
+    time: "3 hours ago",
+    title: "Liverpool hammer Leeds for first win in five games",
+    preview: "Liverpool returned to winning ways in style with a dominant victory over Leeds United...",
+    category: "Sport",
+    readTime: "5",
+  },
+];
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
 		<section class=" bg-gray-100 py-9 my-7 rounded-3xl">
 			<p class="text-center uppercase text-gray-600 text-sm font-semibold tracking-widest">
-				Welcome to NewsArticle website.
+				Welcome to News Articles website.
 			</p>
 			<p class="text-center text-4xl font-bold my-1.5">
 				Craft narrative ✍️ that ignite <span class="text-red-600">inspiration</span>💡,
@@ -15,6 +39,8 @@ import Layout from '../layouts/Layout.astro';
 				<span class="text-red-600">knowledge</span> 📕 and entertainment 🎬.
 			</p>
 		</section>
+		<TopArticleCard />
+		<LatestNews articles={articles} />
 	</main>
 </Layout>
 

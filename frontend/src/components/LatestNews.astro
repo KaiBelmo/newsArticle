@@ -1,0 +1,42 @@
+---
+import NewsCard from './NewsCard.astro';
+
+export interface Article {
+  image: string;
+  publisher: string;
+  time: string;
+  title: string;
+  preview: string;
+  category: string;
+  readTime: string;
+}
+
+export interface LatestNewsProps {
+  articles: Article[];
+}
+
+const { articles } = Astro.props;
+---
+
+<div class="mt-8">
+  <!-- Section Header -->
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-2xl font-bold text-gray-800">Latest News</h3>
+    <a href="#" class="text-red-600 font-medium hover:underline">See all</a>
+  </div>
+
+  <!-- News Articles Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    {articles.map((article) => (
+      <NewsCard
+        image={article.image}
+        publisher={article.publisher}
+        time={article.time}
+        title={article.title}
+        preview={article.preview}
+        category={article.category}
+        readTime={article.readTime}
+      />
+    ))}
+  </div>
+</div>
