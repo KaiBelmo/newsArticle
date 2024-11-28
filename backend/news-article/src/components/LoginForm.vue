@@ -83,6 +83,9 @@
 import { ref, reactive, toRaw } from "vue";
 import axios from "axios";
 import { handleLoginError, resetUserError } from "../utils/handleLoginError";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const isLogin = ref("login");
 
@@ -111,6 +114,8 @@ const handleLogin = async () => {
       );
       console.log("logged in");
       console.log(res);
+
+      router.push(`/user-profile/${user.email}`);
     } catch (err) {
       console.error("Error during login: ", err.response);
       handleLoginError(err, userError);
@@ -125,6 +130,8 @@ const handleLogin = async () => {
       );
       console.log("registered email");
       console.log(res);
+
+      router.push(`/user-profile/${user.email}`);
     } catch (err) {
       console.error("Error during registering: ", err.response);
       handleLoginError(err, userError);
