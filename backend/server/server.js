@@ -278,10 +278,10 @@ app.get('/api/posts', async (req, res) => {
   }
 }); 
 
-// fetch all authors
+// fetch all authors names from the articles posted
 app.get('/api/authors', async (req, res) => {
   try {
-    const authors = await Users.find({ role: 'user' }).exec();  
+    const authors = await Articles.distinct('author').exec();
     if (authors.length === 0) {
       return res.status(404).json({ message: 'no authors found' });
     }
