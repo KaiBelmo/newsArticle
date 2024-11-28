@@ -1,100 +1,70 @@
 <template>
-  <div class="bg-white shadow-lg rounded-xl w-[40%] mx-auto min-h-[70%] p-8 flex flex-col">
-    <!-- Profile Header -->
-    <div class="flex flex-col items-center space-y-4 mb-10">
-      <img
-        :src="avatar"
-        alt="User Avatar"
-        class="w-24 h-24 rounded-full border-4 border-blue-500 shadow-xl object-cover"
-      />
-      <div class="text-center">
-        <h2 class="text-2xl font-semibold text-gray-800">{{ name }}</h2>
-        <p class="text-sm text-gray-600 mt-2">{{ bio }}</p>
-      </div>
+  <div class="user-profile-card">
+    <!-- User Info Section -->
+    <div class="user-info">
+      <img :src="avatar" alt="User Avatar" class="avatar" />
+      <h1>{{ name || "No Name Available" }}</h1>
     </div>
 
-    <!-- Tabs Navigation -->
-    <div class="tabs flex justify-center mb-6 border-b-2 border-gray-300">
-      <div @click="setTab('articles')" :class="tabClass('articles')">
-        Authored Articles
-      </div>
-      <div @click="setTab('bio')" :class="tabClass('bio')">Bio</div>
-      <div @click="setTab('edit')" :class="tabClass('edit')">Edit Profile</div>
+    <!-- Tabs Section -->
+    <div class="tabs">
+      <button 
+        @click="activeTab = 'articles'" 
+        :class="{ active: activeTab === 'articles' }" 
+        :aria-selected="activeTab === 'articles'">
+        Articles
+      </button>
+      <button 
+        @click="activeTab = 'bio'" 
+        :class="{ active: activeTab === 'bio' }" 
+        :aria-selected="activeTab === 'bio'">
+        Bio
+      </button>
+      <button 
+        @click="activeTab = 'edit'" 
+        :class="{ active: activeTab === 'edit' }" 
+        :aria-selected="activeTab === 'edit'">
+        Edit Info
+      </button>
     </div>
 
-    <!-- Tab Content with fixed height -->
-    <div class="tab-content flex-1 overflow-y-auto">
-      <div v-show="currentTab === 'articles'" class="mb-8">
-        <h3 class="text-xl font-semibold text-gray-800 mb-6">
-          Articles by {{ name }}
-        </h3>
-        <ul class="space-y-4">
-          <li
-            v-for="article in articles"
-            :key="article.title"
-            class="border-b border-gray-200 pb-4"
-          >
-            <h4 class="text-xl font-semibold text-gray-800">
-              {{ article.title }}
-            </h4>
-            <p class="text-gray-600 mt-2">{{ article.excerpt }}</p>
-            <small class="text-gray-500"
-              >Published: {{ formatDate(article.createdAt) }}</small
-            >
-          </li>
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Articles Tab -->
+      <div v-if="activeTab === 'articles'">
+        <h2>Articles</h2>
+        <p v-if="!articles || !articles.length">No articles available.</p>
+        <ul v-else>
+          <li v-for="(article, index) in articles" :key="index">{{ article.title }}</li>
         </ul>
       </div>
 
-      <div v-show="currentTab === 'bio'" class="mb-8">
-        <h3 class="text-xl font-semibold text-gray-800 mb-6">
-          {{ name }}'s Bio
-        </h3>
-        <p class="text-gray-600">{{ bio }}</p>
+      <!-- Bio Tab -->
+      <div v-if="activeTab === 'bio'">
+        <h2>Bio</h2>
+        <p>{{ bio || "No bio available." }}</p>
       </div>
 
-      <div v-show="currentTab === 'edit'" class="mb-8">
-        <h3 class="text-xl font-semibold text-gray-800 mb-6">
-          Edit Profile Information
-        </h3>
-        <form @submit.prevent="saveChanges" class="space-y-6">
-          <div>
-            <label for="editName" class="block text-sm font-semibold text-gray-700"
-              >Full Name</label
-            >
-            <input
-              type="text"
-              v-model="editableData.name"
-              id="editName"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-            />
+      <!-- Edit Info Tab -->
+      <div v-if="activeTab === 'edit'">
+        <h2>Edit Info</h2>
+        <form @submit.prevent="saveChanges">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="editForm.email" placeholder="Enter your email" required />
           </div>
-          <div>
-            <label for="editBio" class="block text-sm font-semibold text-gray-700">Bio</label>
-            <textarea
-              v-model="editableData.bio"
-              id="editBio"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-            ></textarea>
+
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" v-model="editForm.bio" placeholder="Enter your bio"></textarea>
           </div>
-          <div>
-            <label for="editAvatar" class="block text-sm font-semibold text-gray-700"
-              >Avatar URL</label
-            >
-            <input
-              type="text"
-              v-model="editableData.avatar"
-              id="editAvatar"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-            />
+
+          <div class="form-group">
+            <label for="avatar">Avatar URL</label>
+            <input type="url" id="avatar" v-model="editForm.avatar" placeholder="Enter avatar URL (link)" required />
           </div>
-          <div class="flex justify-end">
-            <button
-              type="submit"
-              class="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-200"
-            >
-              Save Changes
-            </button>
-          </div>
+
+          <button type="submit">Save Changes</button>
         </form>
       </div>
     </div>
@@ -102,57 +72,184 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 
-// Destructure props inside setup function
+// Props received from the parent, with default values and types
 const props = defineProps({
-  name: String,
-  bio: String,
-  avatar: String,
-  articles: Array,
+  name: {
+    type: String,
+    default: ""
+  },
+  bio: {
+    type: String,
+    default: ""
+  },
+  avatar: {
+    type: String,
+    default: ""
+  },
+  articles: {
+    type: Array,
+    default: () => []
+  },
 });
 
-const currentTab = ref("articles");
+// Reactive state for the active tab
+const activeTab = ref("articles");
 
-const editableData = ref({
-  name: props.name,
-  bio: props.bio,
-  avatar: props.avatar,
+// Edit form state (for user input)
+const editForm = ref({
+  email: '',
+  bio: '',
+  avatar: '',
 });
 
-const setTab = (tab) => {
-  currentTab.value = tab;
-};
-
-const tabClass = (tab) =>
-  computed(() =>
-    [
-      "tab py-3 px-6 cursor-pointer text-lg font-medium transition-all duration-300",
-      currentTab.value === tab
-        ? "text-blue-600 border-b-4 border-blue-600"
-        : "text-gray-700 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600",
-    ].join(" ")
-  ).value;
-
+// Method to save changes (you can implement API calls here)
 const saveChanges = () => {
-  alert(`Updated Profile:\nName: ${editableData.value.name}\nBio: ${editableData.value.bio}`);
+  // Log the updated data to the console for now (you can replace this with actual saving logic)
+  console.log("Updated Info:", editForm.value);
+  // You can emit the data to the parent or store it in a database/API
 };
-
-const formatDate = (date) => new Date(date).toLocaleDateString();
 </script>
 
 <style scoped>
-.tab:hover {
-  color: #3b82f6;
+.user-profile-card {
+  border: 3px solid #db2c2c;
+  border-radius: 20px;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
-input,
-textarea {
-  transition: all 0.2s ease-in-out;
+.user-profile-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 4px #333;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tabs button {
+  padding: 12px 24px;
+  border: 1px solid #333;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.tabs button:hover {
+  background: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabs button.active {
+  background: #DC2626;
+  color: #fff;
+  border-color: #DC2626;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.tab-content {
+  margin-top: 16px;
+}
+
+.tab-content h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.tab-content p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.tab-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tab-content li {
+  margin-bottom: 8px;
+}
+
+.tab-content li:before {
+  content: "•";
+  margin-right: 8px;
+  color: #007bff;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-weight: bold;
+  display: block;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+button[type="submit"] {
+  padding: 12px 24px;
+  border: none;
+  background-color: #DC2626;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .user-profile-card {
+    padding: 16px;
+  }
+  .tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 </style>

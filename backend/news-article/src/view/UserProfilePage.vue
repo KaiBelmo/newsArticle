@@ -1,39 +1,54 @@
 <template>
-  <section class="bg-zinc-900 h-full">
-    <UserProfileCard
-      :name="user.name"
-      :bio="user.bio"
-      :avatar="user.avatar"
-      :articles="user.articles"
-    />
+  <section class="p-8">
+    <div v-if="loading" class="text-center">
+      <p>Loading user profile...</p>
+    </div>
+
+    <div v-else-if="error" class="text-center">
+      <h1 class="text-2xl font-bold text-red-500">Error Loading Profile</h1>
+      <p>{{ error }}</p>
+    </div>
+
+    <div v-else>
+      <UserProfileCard
+        :name="user?.email || 'No Email Available'"
+        :bio="user?.bio || 'No bio available.'"
+        :avatar="user?.avatar || 'https://via.placeholder.com/100'"
+      />
+    </div>
   </section>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import UserProfileCard from "../components/UserProfileCard.vue"; // Import the card component
 
-// Example user data
-const user = ref({
-  name: "John Doe",
-  bio: "A passionate writer and tech enthusiast.",
-  avatar: "https://via.placeholder.com/100",
-  articles: [
-    {
-      title: "How to Build a Simple Web App",
-      excerpt: "A step-by-step guide to building your first web app.",
-      createdAt: "2024-11-01",
-    },
-    {
-      title: "Understanding JavaScript Closures",
-      excerpt: "A deep dive into closures in JavaScript.",
-      createdAt: "2024-10-15",
-    },
-    {
-      title: "CSS Grid Layout: A Beginner's Guide",
-      excerpt: "An introduction to using CSS Grid for layouts.",
-      createdAt: "2024-09-30",
-    },
-  ],
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import UserProfileCard from "../components/UserProfileCard.vue"; // Import UserProfileCard component
+
+// Reactive state
+const user = ref(null);
+const loading = ref(true);
+const error = ref(null);
+
+// Get the email parameter from the route
+const route = useRoute();
+const email = route.params.email;
+
+// Fetch user data
+onMounted(async () => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/user/email/${email}`);
+    console.log("API response:", response.data); // Log API response
+    console.log("User data before assignment:", user.value);
+    user.value = response.data.user; // Assign data to user
+    console.log("User data after assignment:", user.value); // Log assigned user data
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    error.value = "Failed to load user profile. Please try again.";
+  } finally {
+    loading.value = false;
+  }
 });
+
 </script>
