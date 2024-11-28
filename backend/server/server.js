@@ -275,5 +275,22 @@ app.get('/api/posts', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'error retrieving posts' });
+  }
+}); 
+
+// fetch all authors
+app.get('/api/authors', async (req, res) => {
+  try {
+    const authors = await Users.find({ role: 'user' }).exec();  
+    if (authors.length === 0) {
+      return res.status(404).json({ message: 'no authors found' });
+    }
+    res.status(200).json({ message: 'authors retrieved successfully', authors });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving authors' });
+  }
+});
+
 
 // mongodb://localhost:27017
