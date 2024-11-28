@@ -12,6 +12,7 @@
     />
     <LatestNews :articles="articlesData" />
   </Home>
+  <Footer />
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@ import Home from "../components/Home.vue";
 import Banner from "../components/Banner.vue";
 import TopArticleCard from "../components/TopArticleCard.vue";
 import LatestNews from '../components/LatestNews.vue';
+import Footer from "../components/Footer.vue";
 
 const articlesData = [
   {

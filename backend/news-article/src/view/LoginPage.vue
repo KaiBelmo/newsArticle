@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-center p-3 w-screen h-screen bg-zinc-900"
+    class="flex flex-col items-center justify-center mt-10"
   >
     <LoginForm />
   </div>
