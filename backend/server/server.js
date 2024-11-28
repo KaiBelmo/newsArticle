@@ -193,7 +193,7 @@ app.get('/api/listallarticles', async (req, res) => {
   }
 });
 
-app.get('/api/searcharticles', async (req, res) => {
+app.get('/api/search', async (req, res) => {
   try {
     const { keywords } = req.query;
     const query = {
@@ -249,5 +249,19 @@ app.get('/api/user/:id', async (req, res) => {
     res.status(500).json({ message: 'error retrieving user' });
   }
 })
+
+// fetch latest 4 articles
+app.get('/api/latestarticles', async (req, res) => {
+  try {
+    const articles = await Articles.find().sort({ createdAt: -1 }).limit(4).exec();
+    if (articles.length === 0) {
+      return res.status(404).json({ message: 'no articles found' });
+    }
+    res.status(200).json({ message: 'articles retrieved successfully', articles });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving articles' });
+  }
+});
 
 // mongodb://localhost:27017
