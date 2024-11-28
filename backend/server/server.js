@@ -264,4 +264,16 @@ app.get('/api/latestarticles', async (req, res) => {
   }
 });
 
+// send all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await Articles.find().exec();
+    if (posts.length === 0) {
+      return res.status(404).json({ message: 'no posts found' });
+    }
+    res.status(200).json({ message: 'posts retrieved successfully', posts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving posts' });
+
 // mongodb://localhost:27017
