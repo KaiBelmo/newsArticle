@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import TopArticleCard from '../components/TopArticleCard.astro';
 import LatestNews from '../components/LatestNews.astro';
+import Footer from '../components/Footer.astro';
 
 //tmp articles examples
 const articles = [
@@ -16,12 +17,30 @@ const articles = [
   },
   {
     image: "https://via.placeholder.com/500x300",
-    publisher: "CNN",
-    time: "3 hours ago",
+    publisher: "ZBI",
+    time: "15 hours ago",
     title: "Liverpool hammer Leeds for first win in five games",
     preview: "Liverpool returned to winning ways in style with a dominant victory over Leeds United...",
     category: "Sport",
     readTime: "5",
+  },
+  {
+    image: "https://via.placeholder.com/500x300",
+    publisher: "ZBI",
+    time: "15 hours ago",
+    title: "Liverpool hammer Leeds for first win in five games",
+    preview: "Liverpool returned to winning ways in style with a dominant victory over Leeds United...",
+    category: "Sport",
+    readTime: "5",
+  },
+  {
+    image: "https://via.placeholder.com/500x300",
+    publisher: "BBC",
+    time: "1 hour ago",
+    title: "'He deserves a lot more': Verstappen backs Alonso",
+    preview: "Max Verstappen believes Fernando Alonso deserves far more success in his Formula 1 career...",
+    category: "Sport",
+    readTime: "2",
   },
 ];
 ---
@@ -42,6 +61,7 @@ const articles = [
 		<TopArticleCard />
 		<LatestNews articles={articles} />
 	</main>
+  <Footer />
 </Layout>
 
 <style>
