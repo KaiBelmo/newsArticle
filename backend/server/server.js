@@ -292,5 +292,18 @@ app.get('/api/authors', async (req, res) => {
   }
 });
 
+// fetch user info by email (email, avatar, bio)
+app.get('/api/user/email/:email', async (req, res) => {
+  try {
+    const user = await Users.findOne({ email: req.params.email }, 'email avatar bio').exec();
+    if (!user) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+    res.status(200).json({ message: 'user info retrieved successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'error retrieving user info' });
+  }
+});
 
 // mongodb://localhost:27017

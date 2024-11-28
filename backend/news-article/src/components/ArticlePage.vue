@@ -1,67 +1,58 @@
 <template>
-    <div class="article-page">
-      <div class="article-container">
-        <!-- Article Title -->
-        <h1 class="article-title">{{ article.title }}</h1>
-  
-        <!-- Article Content -->
-        <div class="article-content">
-          <p>{{ article.content }}</p>
-        </div>
-      </div>
+  <div v-if="loading" class="text-center p-8">
+    <p>Loading article...</p>
+  </div>
+
+  <div v-else-if="error" class="text-center p-8">
+    <h1 class="text-2xl font-bold text-red-500">Error Loading Article</h1>
+    <p class="text-gray-600 mt-2">The article could not be found.</p>
+  </div>
+
+  <div v-else class="max-w-4xl mx-auto px-4 py-8">
+    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 text-center mb-6">
+      {{ article.title }}
+    </h1>
+    <div class="text-gray-500 text-sm text-center mb-6">
+      By <span class="font-semibold">{{ article.publisher }}</span> • {{ article.time }}
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "ArticlePage",
-    data() {
-      return {
-        article: {
-          title: "How to Build a Simple Web App",
-          content: "This is the full content of the article. You can write your detailed content here. Include everything you'd like the readers to know about the article's subject.",
-        },
-      };
-    },
-    mounted() {
-      // If you are using Vue Router, fetch the article by its ID or slug when the component mounts.
-      // You can access route params like this: this.$route.params.id
-      // In this example, we will hardcode the article for demonstration purposes.
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .article-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f7fafc;
-  }
-  
-  .article-container {
-    width: 80%;
-    max-width: 800px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  .article-title {
-    font-size: 3rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #2d3748;
-  }
-  
-  .article-content {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #4a5568;
-    text-align: center;
-  }
-  </style>
-  
+    <img
+      :src="article.image"
+      :alt="article.title"
+      class="w-full h-auto rounded-lg mb-8"
+    />
+    <div class="text-gray-700 leading-relaxed text-lg">
+      <p v-for="(paragraph, index) in article.content.split('\n')" :key="index" class="mb-4">
+        {{ paragraph }}
+      </p>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+
+export default {
+  setup() {
+    const route = useRoute();
+    const article = ref(null);
+    const loading = ref(true);
+    const error = ref(false);
+
+    onMounted(async () => {
+      try {
+        const response = await axios.get(`/api/posts/${route.params.id}`);
+        article.value = response.data;
+      } catch (err) {
+        console.error(err);
+        error.value = true;
+      } finally {
+        loading.value = false;
+      }
+    });
+
+    return { article, loading, error };
+  },
+};
+</script>
