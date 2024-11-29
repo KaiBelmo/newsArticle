@@ -306,4 +306,6 @@ app.get('/api/user/email/:email', async (req, res) => {
   }
 });
 
+// update user infos by email
+
 // mongodb://localhost:27017
