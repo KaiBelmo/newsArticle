@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginComponent from './view/LoginPage.vue';
 import UserProfileComponent from './view/UserProfilePage.vue'
 import HomepageComponent from './view/HomePage.vue';
-import AllAuthorsComponent from './view/AllAuthorsPage.vue';
+import AllPostsComponent from './view/AllPostsPage.vue';
 import ArticleDetails from "./view/ArticleDetails.vue";
+import AllAuthorsComponent from './view/AllAuthorsPage.vue';
 
 
 const routes = [
@@ -11,6 +12,7 @@ const routes = [
   { path: '/user-profile/:email', component: UserProfileComponent },
   { path: '/', component: HomepageComponent },
   { path: '/all-authors', component: AllAuthorsComponent },
+  { path: '/all-posts', component: AllPostsComponent },
   { path: "/articles/:id", name: "ArticleDetails", component: ArticleDetails },
 
 ];
