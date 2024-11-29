@@ -15,8 +15,6 @@
     <div class="p-4 sm:w-1/2">
       <div class="flex items-center space-x-2 text-gray-500 text-sm">
         <span class="font-semibold text-black">{{ source }}</span>
-        <span>•</span>
-        <span>{{ timeAgo }}</span>
       </div>
 
       <h2
@@ -53,10 +51,6 @@ defineProps({
     required: true,
   },
   source: {
-    type: String,
-    required: true,
-  },
-  timeAgo: {
     type: String,
     required: true,
   },
