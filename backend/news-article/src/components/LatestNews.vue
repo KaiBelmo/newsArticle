@@ -11,13 +11,12 @@
       <NewsCard
         v-for="article in articles"
         :key="article.title"
-        :image="article.image"
-        :publisher="article.publisher"
-        :time="article.time"
+        :image="article.imageSrc"
+        :publisher="article.author"
         :title="article.title"
-        :preview="article.preview"
+        :preview="article.body"
         :category="article.category"
-        :readTime="article.readTime"
+        :readTime="calculateReadTime(article.body)"
       />
     </div>
   </div>
@@ -25,13 +24,49 @@
 
 <script setup>
 import NewsCard from './NewsCard.vue';
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
-defineProps({
-  articles: {
-    type: Array,
-    required: true,
-  },
+
+// defineProps({
+//   articles: {
+//     type: Array,
+//     required: true,
+//   },
+// });
+
+const articles = ref(null);
+
+onMounted(async () => {
+  try {
+    console.log(23123);
+    const response = await axios.get(
+      "http://localhost:8080/api/latestarticles"
+    );
+    console.log(response);
+    if (response.data.articles) {
+      articles.value = response.data.articles;
+      console.log(articles.value)
+    }
+  } catch (err) {
+    console.error(err);
+    article.value = null;
+  }
 });
+
+
+console.log("--------------------------------------")
+// console.log(articles);
+console.log("--------------------------------------")
+
+function calculateReadTime(text) {
+  console.log(text);
+  const wordsPerMinute = 200; // Average reading speed
+  const words = text.split(/\s+/).length; // Split text into words by whitespace
+  const readTimeMinutes = Math.ceil(words / wordsPerMinute); // Round up to nearest minute
+  return readTimeMinutes.toString();
+}
+
 </script>
 
 <style scoped>
