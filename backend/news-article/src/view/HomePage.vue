@@ -39,7 +39,9 @@ onMounted(async () => {
     console.log(response);
     if (response.data.articles) {
       article.value = response.data.articles;
+      console.log("article.value ----------------------")
       console.log(article.value)
+      console.log("article.value-----------------------")
     }
   } catch (err) {
     console.error(err);

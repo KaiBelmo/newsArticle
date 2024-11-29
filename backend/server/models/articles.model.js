@@ -17,6 +17,15 @@ const articleSchema = mongoose.Schema({
   }, isPrivate: {
     type: Boolean,
     required: [true, "set article to private or public"]
+  }, imageSrc: {
+    type: String,
+    default: "https://via.placeholder.com/500x300"
+  }, source: {
+    type: String,
+    default: "unkown"
+  }, category: {
+    type: String,
+    default: "unkown"
   }
 });
 
